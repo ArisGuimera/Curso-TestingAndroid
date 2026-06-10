@@ -1,7 +1,6 @@
 package com.aristidevs.masterclass.notes.domain
 
 import com.aristidevs.masterclass.notes.data.Note
-import kotlin.math.roundToInt
 
 /**
  * Resumen de estadísticas de una lista de notas.
@@ -28,7 +27,7 @@ class GetNotesSummaryUseCase {
         val percentage = if (total == 0) {
             0
         } else {
-            ((important * 100.0) / total).roundToInt()
+            (important * 100) / total
         }
 
         return NotesSummary(
