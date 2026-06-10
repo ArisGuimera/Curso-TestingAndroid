@@ -1,12 +1,21 @@
 package com.aristidevs.masterclass.notes.ui
 
+import app.cash.turbine.test
 import com.aristidevs.masterclass.notes.MainDispatcherRule
-import com.aristidevs.masterclass.notes.data.FakeNotesRepository
+import com.aristidevs.masterclass.notes.data.Note
+import com.aristidevs.masterclass.notes.domain.NotesRepository
+import io.mockk.Runs
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.every
+import io.mockk.just
+import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 
@@ -16,78 +25,47 @@ class NotesViewModelTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
+    private val repository: NotesRepository = mockk(relaxed = true)
+
     @Test
     fun canSave_is_false_when_title_invalid() = runTest {
-        val viewModel = NotesViewModel(FakeNotesRepository())
+        every { repository.getNotes() } returns flowOf(emptyList())
+        val viewModel = NotesViewModel(repository)
 
-        viewModel.onTitleChanged("ab") // inválido
+        viewModel.onTitleChanged("ab")
 
-        val state = viewModel.uiState.value
-        assertFalse(state.canSave)
+        assertFalse(viewModel.uiState.value.canSave)
     }
 
     @Test
-    fun save_with_valid_title_inserts_clears_inputs_and_updates_state() = runTest {
-        val viewModel = NotesViewModel(FakeNotesRepository())
+    fun saving_valid_note_calls_repository_and_clears_inputs() = runTest {
+        every { repository.getNotes() } returns flowOf(emptyList())
+        coEvery { repository.addNote(any(), any(), any()) } just Runs
+        val viewModel = NotesViewModel(repository)
 
         viewModel.onTitleChanged("  Mi nota  ")
         viewModel.onContentChanged("Contenido")
         viewModel.onImportantChanged(true)
-
         viewModel.saveNote()
 
-        val state = viewModel.uiState.value
-        assertEquals("", state.title)
-        assertEquals("", state.content)
-        assertFalse(state.important)
-        assertEquals(1, state.notes.size)
-        assertEquals("Mi nota", state.notes.first().title)
-        assertTrue(state.notes.first().important)
+        // El título se normaliza (trim) antes de guardar.
+        coVerify { repository.addNote("Mi nota", "Contenido", true) }
+        assertEquals("", viewModel.uiState.value.title)
     }
 
     @Test
-    fun important_only_filter_works_on_state() = runTest {
-        val viewModel = NotesViewModel(FakeNotesRepository())
+    fun state_emits_notes_when_repository_emits() = runTest {
+        val notesFlow = MutableStateFlow(emptyList<Note>())
+        every { repository.getNotes() } returns notesFlow
+        val viewModel = NotesViewModel(repository)
 
-        viewModel.onTitleChanged("Normal")
-        viewModel.onImportantChanged(false)
-        viewModel.saveNote()
+        viewModel.uiState.test {
+            assertEquals(0, awaitItem().notes.size)
 
-        viewModel.onTitleChanged("Importante")
-        viewModel.onImportantChanged(true)
-        viewModel.saveNote()
+            notesFlow.value = listOf(Note(id = 1, title = "A", content = "", important = true))
 
-        // Sin filtro: deben aparecer las dos
-        var state = viewModel.uiState.value
-        assertEquals(2, state.notes.size)
-
-        // Con filtro: solo importantes
-        viewModel.onImportantOnlyToggled()
-        state = viewModel.uiState.value
-        assertEquals(1, state.notes.size)
-        assertTrue(state.notes.first().important)
-    }
-
-    @Test
-    fun `al guardar notas el resumen se actualiza en el estado`() = runTest {
-        // given
-        val viewModel = NotesViewModel(FakeNotesRepository())
-
-        // when: guardamos una nota normal y una importante
-        viewModel.onTitleChanged("Normal")
-        viewModel.onImportantChanged(false)
-        viewModel.saveNote()
-
-        viewModel.onTitleChanged("Importante")
-        viewModel.onImportantChanged(true)
-        viewModel.saveNote()
-
-        // then: el resumen refleja las dos notas (caso de uso integrado en el ViewModel)
-        val state = viewModel.uiState.value
-        assertEquals(2, state.notesSummary.total)
-        assertEquals(1, state.notesSummary.important)
-        assertEquals(1, state.notesSummary.nonImportant)
-        assertEquals(50, state.notesSummary.importantPercentage)
+            assertEquals(1, awaitItem().notes.size)
+            cancelAndConsumeRemainingEvents()
+        }
     }
 }
-

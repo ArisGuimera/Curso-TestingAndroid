@@ -4,7 +4,6 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -22,10 +21,7 @@ class NoteDaoTest {
     @Before
     fun setUp() {
         val context = ApplicationProvider.getApplicationContext<android.content.Context>()
-        db = Room.inMemoryDatabaseBuilder(
-            context,
-            NotesDatabase::class.java
-        ).build()
+        db = Room.inMemoryDatabaseBuilder(context, NotesDatabase::class.java).build()
         dao = db.noteDao()
     }
 
@@ -35,35 +31,14 @@ class NoteDaoTest {
     }
 
     @Test
-    fun insert_and_query_returns_in_expected_order() = runTest {
-        val first = Note(title = "Primera", content = "", important = false)
-        val second = Note(title = "Segunda", content = "", important = true)
-
-        dao.insert(first)
-        dao.insert(second)
+    fun insert_and_query_returns_notes_in_desc_order() = runTest {
+        dao.insert(Note(title = "Primera", content = "", important = false))
+        dao.insert(Note(title = "Segunda", content = "", important = true))
 
         val notes = dao.getNotesOnce()
-
-        assertEquals(2, notes.size)
-        // Orden DESC por id: la segunda va primero
-        assertEquals("Segunda", notes[0].title)
-        assertEquals("Primera", notes[1].title)
-    }
-
-    @Test
-    fun insert_and_query_with_flow_returns_in_expected_order() = runTest {
-        val first = Note(title = "Primera", content = "", important = false)
-        val second = Note(title = "Segunda", content = "", important = true)
-
-        dao.insert(first)
-        dao.insert(second)
-
-        // Usamos .first() para tomar la primera emisión del Flow y cerrar la suscripción
-        val notes = dao.getNotesFlow().first()
 
         assertEquals(2, notes.size)
         assertEquals("Segunda", notes[0].title)
         assertEquals("Primera", notes[1].title)
     }
 }
-

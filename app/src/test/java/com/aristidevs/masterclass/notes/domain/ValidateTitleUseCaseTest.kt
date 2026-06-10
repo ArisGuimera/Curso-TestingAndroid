@@ -1,56 +1,42 @@
 package com.aristidevs.masterclass.notes.domain
 
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
+import org.junit.Assert.assertEquals
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
 
-class ValidateTitleUseCaseTest {
+@RunWith(Parameterized::class)
+class ValidateTitleUseCaseTest(
+    private val title: String,
+    private val expected: Boolean,
+) {
 
     private val validateTitle = ValidateTitleUseCase()
 
     @Test
-    fun empty_string_is_invalid() {
-        assertFalse(validateTitle(""))
+    fun validates_title() {
+        assertEquals(expected, validateTitle(title))
     }
 
-    @Test
-    fun only_spaces_is_invalid() {
-        assertFalse(validateTitle("   "))
-    }
-
-    @Test
-    fun title_with_less_than_three_chars_is_invalid() {
-        assertFalse(validateTitle("ab"))
-    }
-
-    @Test
-    fun title_with_more_than_max_length_is_invalid() {
-        val longTitle = "a".repeat(41)
-        assertFalse(validateTitle(longTitle))
-    }
-
-    @Test
-    fun numeric_only_title_is_invalid() {
-        assertFalse(validateTitle("123456"))
-    }
-
-    @Test
-    fun title_with_not_allowed_symbol_is_invalid() {
-        assertFalse(validateTitle("Nota@rara"))
-    }
-
-    @Test
-    fun title_with_double_spaces_is_invalid() {
-        assertFalse(validateTitle("Mi  nota"))
-    }
-
-    @Test
-    fun valid_trimmed_title_is_valid() {
-        assertTrue(validateTitle("  Mi nota válida  "))
-    }
-
-    @Test
-    fun title_with_allowed_punctuation_is_valid() {
-        assertTrue(validateTitle("Título válido 123!?.,"))
+    companion object {
+        @JvmStatic
+        @Parameterized.Parameters(name = "\"{0}\" -> {1}")
+        fun data() = listOf(
+            arrayOf("", false),
+            arrayOf("   ", false),
+            arrayOf("ab", false),
+            arrayOf("a".repeat(41), false),
+            arrayOf("123456", false),
+            arrayOf("Nota@rara", false),
+            arrayOf("Mi  nota", false),
+            arrayOf("!?.,", false),
+            arrayOf("Compra: pan", false),
+            arrayOf("Mi nota", true),
+            arrayOf("abc", true),
+            arrayOf("  Mi nota válida  ", true),
+            arrayOf("Título válido 123!?.,", true),
+            arrayOf("Reunión 10am", true),
+            arrayOf("a".repeat(40), true),
+        )
     }
 }
