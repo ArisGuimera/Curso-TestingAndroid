@@ -41,7 +41,7 @@ git checkout solucion   # ver el resultado
 | **Unitarios** (JVM, sin dispositivo) | `./gradlew testDebugUnitTest` |
 | **Integración + UI** (emulador/dispositivo) | `./gradlew connectedDebugAndroidTest` |
 
-> ⚠️ **Importante para la parte de UI:** Espresso 3.6.1 **no es compatible con Android 15/16** (`InputManager.getInstance` fue eliminado). Ejecuta los tests instrumentados en un **emulador con API ≤ 34** (p. ej. Pixel 6 API 34). Los unitarios y los de Room funcionan en cualquier configuración.
+> ℹ️ Los tests instrumentados usan **Espresso 3.7.0**, compatible con **Android 15/16** (las versiones anteriores fallaban con `NoSuchMethodException: InputManager.getInstance`). Funcionan en cualquier dispositivo o emulador.
 
 ---
 
