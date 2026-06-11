@@ -30,7 +30,7 @@ git checkout solucion   # ver el resultado
 |------|-------|------------|--------------|
 | **Unitario** | `app/src/test` | `ValidateTitleUseCase` y `GetNotesSummaryUseCase` (**parametrizados**) y `NotesViewModel` | JUnit4, **MockK**, **Turbine**, coroutines-test |
 | **Integración** | `app/src/androidTest` | `NoteDao` sobre una base de datos **Room en memoria** | Room testing, AndroidJUnit4 |
-| **UI** | `app/src/androidTest` | La pantalla de notas: escribir, guardar y filtrar | **Compose UI Test** (`createAndroidComposeRule`) |
+| **UI** | `app/src/androidTest` | El composable `NotesContent` con estados controlados (render + interacción) | **Compose UI Test** (`createComposeRule`) |
 
 ---
 
