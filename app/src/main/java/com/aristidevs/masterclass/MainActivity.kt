@@ -3,6 +3,7 @@ package com.aristidevs.masterclass
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.room.Room
@@ -16,6 +17,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
 
         // Wiring muy simple para la masterclass:
         // aquí creamos la BD, el repositorio y el ViewModel sin DI.
