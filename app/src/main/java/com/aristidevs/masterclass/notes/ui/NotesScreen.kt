@@ -46,27 +46,6 @@ fun NotesScreen(
 ) {
     val state by viewModel.uiState.collectAsState()
 
-    NotesContent(
-        state = state,
-        onTitleChanged = viewModel::onTitleChanged,
-        onContentChanged = viewModel::onContentChanged,
-        onImportantChanged = viewModel::onImportantChanged,
-        onImportantOnlyToggled = viewModel::onImportantOnlyToggled,
-        onSaveClicked = viewModel::saveNote,
-        onDeleteClicked = viewModel::onDeleteNote
-    )
-}
-
-@Composable
-fun NotesContent(
-    state: NotesUiState,
-    onTitleChanged: (String) -> Unit,
-    onContentChanged: (String) -> Unit,
-    onImportantChanged: (Boolean) -> Unit,
-    onImportantOnlyToggled: () -> Unit,
-    onSaveClicked: () -> Unit,
-    onDeleteClicked: (Note) -> Unit
-) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -81,7 +60,7 @@ fun NotesContent(
 
         OutlinedTextField(
             value = state.title,
-            onValueChange = onTitleChanged,
+            onValueChange = viewModel::onTitleChanged,
             modifier = Modifier
                 .fillMaxWidth()
                 .testTag(TITLE_INPUT_TAG),
@@ -92,7 +71,7 @@ fun NotesContent(
 
         OutlinedTextField(
             value = state.content,
-            onValueChange = onContentChanged,
+            onValueChange = viewModel::onContentChanged,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(120.dp)
@@ -106,14 +85,14 @@ fun NotesContent(
         ) {
             Checkbox(
                 checked = state.important,
-                onCheckedChange = onImportantChanged,
+                onCheckedChange = viewModel::onImportantChanged,
                 modifier = Modifier.testTag(IMPORTANT_SWITCH_TAG)
             )
             Text(text = "Importante")
         }
 
         Button(
-            onClick = onSaveClicked,
+            onClick = viewModel::saveNote,
             enabled = state.canSave && !state.isLoading,
             modifier = Modifier
                 .fillMaxWidth()
@@ -131,7 +110,7 @@ fun NotesContent(
             Text(text = "Solo importantes")
             Checkbox(
                 checked = state.importantOnly,
-                onCheckedChange = { onImportantOnlyToggled() },
+                onCheckedChange = { viewModel.onImportantOnlyToggled() },
                 modifier = Modifier.testTag(IMPORTANT_ONLY_TOGGLE_TAG)
             )
         }
@@ -156,7 +135,7 @@ fun NotesContent(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(state.notes) { note ->
-                NoteRow(note = note, onDelete = { onDeleteClicked(note) })
+                NoteRow(note = note, onDelete = { viewModel.onDeleteNote(note) })
             }
         }
     }
