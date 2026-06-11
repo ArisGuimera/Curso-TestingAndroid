@@ -128,6 +128,12 @@ class NotesViewModel(
         }
     }
 
+    fun onDeleteNote(note: Note) {
+        viewModelScope.launch {
+            repository.deleteNote(note)
+        }
+    }
+
     private fun applyFilter(
         notes: List<Note>,
         importantOnly: Boolean

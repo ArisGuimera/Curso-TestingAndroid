@@ -10,9 +10,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -33,6 +37,7 @@ const val SAVE_BUTTON_TAG = "saveButton"
 const val IMPORTANT_ONLY_TOGGLE_TAG = "importantOnlyToggle"
 const val NOTES_SUMMARY_TAG = "notesSummary"
 const val NOTES_LIST_TAG = "notesList"
+const val DELETE_BUTTON_TAG = "deleteButton"
 
 @Composable
 fun NotesScreen(
@@ -46,7 +51,8 @@ fun NotesScreen(
         onContentChanged = viewModel::onContentChanged,
         onImportantChanged = viewModel::onImportantChanged,
         onImportantOnlyToggled = viewModel::onImportantOnlyToggled,
-        onSaveClicked = viewModel::saveNote
+        onSaveClicked = viewModel::saveNote,
+        onDeleteClicked = viewModel::onDeleteNote
     )
 }
 
@@ -57,7 +63,8 @@ fun NotesContent(
     onContentChanged: (String) -> Unit,
     onImportantChanged: (Boolean) -> Unit,
     onImportantOnlyToggled: () -> Unit,
-    onSaveClicked: () -> Unit
+    onSaveClicked: () -> Unit,
+    onDeleteClicked: (Note) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -147,14 +154,14 @@ fun NotesContent(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(state.notes) { note ->
-                NoteRow(note = note)
+                NoteRow(note = note, onDelete = { onDeleteClicked(note) })
             }
         }
     }
 }
 
 @Composable
-private fun NoteRow(note: Note) {
+private fun NoteRow(note: Note, onDelete: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -168,13 +175,23 @@ private fun NoteRow(note: Note) {
                 text = note.title,
                 style = MaterialTheme.typography.bodyLarge,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f)
             )
             if (note.important) {
                 Text(
                     text = "IMPORTANTE",
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.primary
+                )
+            }
+            IconButton(
+                onClick = onDelete,
+                modifier = Modifier.testTag(DELETE_BUTTON_TAG)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "Borrar ${note.title}"
                 )
             }
         }
@@ -189,4 +206,3 @@ private fun NoteRow(note: Note) {
         }
     }
 }
-
