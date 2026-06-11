@@ -1,4 +1,16 @@
-# Masterclass Testing Android — App de Notas 📝✅
+# Masterclass Testing Android: App de Notas 📝✅
+
+<p align="center">
+<a href="https://youtube.com/live/89-5NTU90fE"><img src="img/thumbnail.webp" style="height: 75%; width:75%;"/></center></a></p>
+
+<p align="center"> 
+ <img src="https://img.shields.io/badge/Kotlin-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white" alt="Kotlin">
+<img src="https://img.shields.io/badge/Jetpack-4285F4?style=for-the-badge&logo=android&logoColor=white" alt="Jetpack">
+<img src="https://img.shields.io/badge/Compose-4285F4?style=for-the-badge&logo=jetpackcompose&logoColor=white" alt="Compose">
+<img src="https://img.shields.io/badge/Unit%20Test-4285F4?style=for-the-badge&logo=kotlin&logoColor=white" alt="Unit Test">
+<img src="https://img.shields.io/badge/UI%20Test-5E97F6?style=for-the-badge&logo=jetpackcompose&logoColor=white" alt="UI Test">
+<img src="https://img.shields.io/badge/Integration%20Test-7B61FF?style=for-the-badge&logo=android&logoColor=white" alt="Integration Test">
+</p>
 
 Proyecto base para una **masterclass de testing en Android**: una app de notas pequeña pero realista sobre la que se construyen los **tres tipos de test** —unitarios, de integración y de UI— con Kotlin, Jetpack Compose y Room.
 
@@ -41,8 +53,6 @@ git checkout solucion   # ver el resultado
 | **Unitarios** (JVM, sin dispositivo) | `./gradlew testDebugUnitTest` |
 | **Integración + UI** (emulador/dispositivo) | `./gradlew connectedDebugAndroidTest` |
 
-> ℹ️ Los tests instrumentados usan **Espresso 3.7.0**, compatible con **Android 15/16** (las versiones anteriores fallaban con `NoSuchMethodException: InputManager.getInstance`). Funcionan en cualquier dispositivo o emulador.
-
 ---
 
 ## 🏗️ Estructura
@@ -55,8 +65,6 @@ app/src/main/java/com/aristidevs/masterclass/
 │  ├─ domain/                      # ValidateTitleUseCase, GetNotesSummaryUseCase, NotesRepository
 │  └─ ui/                          # NotesScreen (Compose), NotesViewModel
 └─ ui/theme/                       # Tema Material 3
-
-docs/                              # Spec y plan de implementación de la masterclass
 ```
 
 Arquitectura **Clean Architecture ligera** (data / domain / ui), una sola pantalla, sin inyección de dependencias para que todo el cableado sea visible.
@@ -67,8 +75,14 @@ Arquitectura **Clean Architecture ligera** (data / domain / ui), una sola pantal
 
 Kotlin · Jetpack Compose · Room · Coroutines/Flow · JUnit4 · MockK · Turbine · Compose UI Test
 
----
 
-## 🎓 Sobre la masterclass
+----------
 
-Este proyecto es el material de una masterclass de ~2h sobre testing en Android impartida por [AristiDevs](https://github.com/AristiDevs). El recorrido sube por la *pirámide de testing* (unitarios → integración → UI) cazando un bug real por el camino.
+## 🚀 AppCademy.dev
+
+<p align="center">
+<a href="https://appcademy.dev"><img src="img/appcademy.webp" style="height: 35%; width:35%;"/></center></a></p>
+
+Este curso está patrocinado por [AppCademy.dev](https://appcademy.dev) mi plataforma de cursos premium donde no solo aprendemos tecnologías sino que profundizamos en sus desarrollos a través de buenas prácticas y contenido avanzado.
+
+----------
