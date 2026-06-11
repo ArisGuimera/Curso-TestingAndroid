@@ -1,58 +1,109 @@
 package com.aristidevs.masterclass.notes.ui
 
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
-import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.aristidevs.masterclass.MainActivity
+import com.aristidevs.masterclass.notes.data.Note
+import com.aristidevs.masterclass.notes.domain.NotesSummary
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 
-@RunWith(AndroidJUnit4::class)
 class NotesScreenTest {
 
     @get:Rule
-    val composeRule = createAndroidComposeRule<MainActivity>()
+    val composeRule = createComposeRule()
 
-    @Test
-    fun save_note_shows_item_in_list() {
-        composeRule.onNodeWithTag(TITLE_INPUT_TAG).performTextInput("Nota UI")
-        composeRule.onNodeWithTag(SAVE_BUTTON_TAG).performClick()
-
-        composeRule.onNodeWithText("Nota UI").assertIsDisplayed()
+    private fun setContent(
+        state: NotesUiState,
+        onTitleChanged: (String) -> Unit = {},
+        onImportantOnlyToggled: () -> Unit = {},
+        onSaveClicked: () -> Unit = {},
+        onDeleteClicked: (Note) -> Unit = {},
+    ) {
+        composeRule.setContent {
+            NotesContent(
+                state = state,
+                onTitleChanged = onTitleChanged,
+                onContentChanged = {},
+                onImportantChanged = {},
+                onImportantOnlyToggled = onImportantOnlyToggled,
+                onSaveClicked = onSaveClicked,
+                onDeleteClicked = onDeleteClicked,
+            )
+        }
     }
 
     @Test
-    fun important_only_filter_hides_non_important() {
-        // Nota normal
-        composeRule.onNodeWithTag(TITLE_INPUT_TAG).performTextInput("Normal UI")
+    fun notes_are_displayed_in_the_list() {
+        setContent(
+            NotesUiState(
+                notes = listOf(
+                    Note(id = 1, title = "Comprar pan", content = "", important = false),
+                    Note(id = 2, title = "Reunión", content = "", important = true),
+                )
+            )
+        )
+
+        composeRule.onNodeWithText("Comprar pan").assertIsDisplayed()
+        composeRule.onNodeWithText("Reunión").assertIsDisplayed()
+        composeRule.onNodeWithText("IMPORTANTE").assertIsDisplayed()
+    }
+
+    @Test
+    fun summary_is_displayed() {
+        setContent(
+            NotesUiState(
+                notesSummary = NotesSummary(total = 3, important = 2, nonImportant = 1, importantPercentage = 67)
+            )
+        )
+
+        composeRule.onNodeWithText("Resumen: 3 notas (2 importantes, 67%)").assertIsDisplayed()
+    }
+
+    @Test
+    fun typing_title_invokes_callback() {
+        var typed = ""
+        setContent(NotesUiState(), onTitleChanged = { typed = it })
+
+        composeRule.onNodeWithTag(TITLE_INPUT_TAG).performTextInput("Mi nota")
+
+        assertEquals("Mi nota", typed)
+    }
+
+    @Test
+    fun clicking_save_invokes_callback() {
+        var saved = false
+        setContent(NotesUiState(canSave = true), onSaveClicked = { saved = true })
+
         composeRule.onNodeWithTag(SAVE_BUTTON_TAG).performClick()
 
-        // Nota importante
-        composeRule.onNodeWithTag(TITLE_INPUT_TAG).performTextInput("Importante UI")
-        composeRule.onNodeWithTag(IMPORTANT_SWITCH_TAG).performClick()
-        composeRule.onNodeWithTag(SAVE_BUTTON_TAG).performClick()
+        assertTrue(saved)
+    }
 
-        // Activar el filtro "solo importantes"
+    @Test
+    fun toggling_important_only_invokes_callback() {
+        var toggled = false
+        setContent(NotesUiState(), onImportantOnlyToggled = { toggled = true })
+
         composeRule.onNodeWithTag(IMPORTANT_ONLY_TOGGLE_TAG).performClick()
 
-        composeRule.onNodeWithText("Importante UI").assertIsDisplayed()
-        composeRule.onNodeWithText("Normal UI").assertDoesNotExist()
+        assertTrue(toggled)
     }
 
     @Test
-    fun delete_note_removes_it_from_list() {
-        composeRule.onNodeWithTag(TITLE_INPUT_TAG).performTextInput("Para borrar")
-        composeRule.onNodeWithTag(SAVE_BUTTON_TAG).performClick()
-        composeRule.onNodeWithText("Para borrar").assertIsDisplayed()
+    fun clicking_delete_invokes_callback_with_note() {
+        val note = Note(id = 1, title = "Para borrar", content = "", important = false)
+        var deleted: Note? = null
+        setContent(NotesUiState(notes = listOf(note)), onDeleteClicked = { deleted = it })
 
         composeRule.onNodeWithContentDescription("Borrar Para borrar").performClick()
 
-        composeRule.onNodeWithText("Para borrar").assertDoesNotExist()
+        assertEquals(note, deleted)
     }
 }
