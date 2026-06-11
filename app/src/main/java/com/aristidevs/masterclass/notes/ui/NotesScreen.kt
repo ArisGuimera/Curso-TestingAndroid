@@ -31,15 +31,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.aristidevs.masterclass.notes.data.Note
 
-const val TITLE_INPUT_TAG = "titleInput"
-const val CONTENT_INPUT_TAG = "contentInput"
-const val IMPORTANT_SWITCH_TAG = "importantSwitch"
-const val SAVE_BUTTON_TAG = "saveButton"
-const val IMPORTANT_ONLY_TOGGLE_TAG = "importantOnlyToggle"
-const val NOTES_SUMMARY_TAG = "notesSummary"
-const val NOTES_LIST_TAG = "notesList"
-const val DELETE_BUTTON_TAG = "deleteButton"
-
 @Composable
 fun NotesScreen(
     viewModel: NotesViewModel
@@ -62,8 +53,7 @@ fun NotesScreen(
             value = state.title,
             onValueChange = viewModel::onTitleChanged,
             modifier = Modifier
-                .fillMaxWidth()
-                .testTag(TITLE_INPUT_TAG),
+                .fillMaxWidth(),
             label = { Text("Título (mín. 3 caracteres)") },
             singleLine = true,
             isError = state.title.isNotBlank() && !state.canSave && !state.isLoading
@@ -74,8 +64,7 @@ fun NotesScreen(
             onValueChange = viewModel::onContentChanged,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(120.dp)
-                .testTag(CONTENT_INPUT_TAG),
+                .height(120.dp),
             label = { Text("Contenido (opcional)") }
         )
 
@@ -86,7 +75,6 @@ fun NotesScreen(
             Checkbox(
                 checked = state.important,
                 onCheckedChange = viewModel::onImportantChanged,
-                modifier = Modifier.testTag(IMPORTANT_SWITCH_TAG)
             )
             Text(text = "Importante")
         }
@@ -96,7 +84,6 @@ fun NotesScreen(
             enabled = state.canSave && !state.isLoading,
             modifier = Modifier
                 .fillMaxWidth()
-                .testTag(SAVE_BUTTON_TAG)
         ) {
             Text(if (state.isLoading) "Guardando..." else "Guardar")
         }
@@ -111,7 +98,6 @@ fun NotesScreen(
             Checkbox(
                 checked = state.importantOnly,
                 onCheckedChange = { viewModel.onImportantOnlyToggled() },
-                modifier = Modifier.testTag(IMPORTANT_ONLY_TOGGLE_TAG)
             )
         }
 
@@ -120,7 +106,6 @@ fun NotesScreen(
         Text(
             text = "Resumen: ${state.notesSummary.total} notas (${state.notesSummary.important} importantes, ${state.notesSummary.importantPercentage}%)",
             style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.testTag(NOTES_SUMMARY_TAG)
         )
 
         Text(
@@ -130,8 +115,7 @@ fun NotesScreen(
 
         LazyColumn(
             modifier = Modifier
-                .fillMaxSize()
-                .testTag(NOTES_LIST_TAG),
+                .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(state.notes) { note ->
@@ -167,8 +151,7 @@ private fun NoteRow(note: Note, onDelete: () -> Unit) {
                 )
             }
             IconButton(
-                onClick = onDelete,
-                modifier = Modifier.testTag(DELETE_BUTTON_TAG)
+                onClick = onDelete
             ) {
                 Icon(
                     imageVector = Icons.Default.Delete,

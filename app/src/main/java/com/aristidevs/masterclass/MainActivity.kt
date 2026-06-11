@@ -19,8 +19,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        // Wiring muy simple para la masterclass:
-        // aquí creamos la BD, el repositorio y el ViewModel sin DI.
         val db = Room.databaseBuilder(
             applicationContext,
             NotesDatabase::class.java,
