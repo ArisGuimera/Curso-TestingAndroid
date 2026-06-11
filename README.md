@@ -3,13 +3,18 @@
 <p align="center">
 <a href="https://youtube.com/live/89-5NTU90fE"><img src="img/thumbnail.webp" style="height: 75%; width:75%;"/></center></a></p>
 
-<p align="center"> 
- <img src="https://img.shields.io/badge/Kotlin-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white" alt="Kotlin">
+<p align="center">
+<img src="https://img.shields.io/badge/Kotlin-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white" alt="Kotlin">
+
 <img src="https://img.shields.io/badge/Jetpack-4285F4?style=for-the-badge&logo=android&logoColor=white" alt="Jetpack">
-<img src="https://img.shields.io/badge/Compose-4285F4?style=for-the-badge&logo=jetpackcompose&logoColor=white" alt="Compose">
-<img src="https://img.shields.io/badge/Unit%20Test-4285F4?style=for-the-badge&logo=kotlin&logoColor=white" alt="Unit Test">
-<img src="https://img.shields.io/badge/UI%20Test-5E97F6?style=for-the-badge&logo=jetpackcompose&logoColor=white" alt="UI Test">
-<img src="https://img.shields.io/badge/Integration%20Test-7B61FF?style=for-the-badge&logo=android&logoColor=white" alt="Integration Test">
+
+<img src="https://img.shields.io/badge/Compose-1A73E8?style=for-the-badge&logo=jetpackcompose&logoColor=white" alt="Compose">
+
+<img src="https://img.shields.io/badge/Unit%20Test-673AB7?style=for-the-badge&logo=kotlin&logoColor=white" alt="Unit Test">
+
+<img src="https://img.shields.io/badge/UI%20Test-0097A7?style=for-the-badge&logo=jetpackcompose&logoColor=white" alt="UI Test">
+
+<img src="https://img.shields.io/badge/Integration%20Test-303F9F?style=for-the-badge&logo=android&logoColor=white" alt="Integration Test">
 </p>
 
 Proyecto base para una **masterclass de testing en Android**: una app de notas pequeña pero realista sobre la que se construyen los **tres tipos de test** —unitarios, de integración y de UI— con Kotlin, Jetpack Compose y Room.
