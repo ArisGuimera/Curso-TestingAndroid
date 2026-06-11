@@ -41,4 +41,14 @@ class NoteDaoTest {
         assertEquals("Segunda", notes[0].title)
         assertEquals("Primera", notes[1].title)
     }
+
+    @Test
+    fun delete_removes_note_from_db() = runTest {
+        dao.insert(Note(title = "Borrable", content = "", important = false))
+        val inserted = dao.getNotesOnce().first()
+
+        dao.delete(inserted)
+
+        assertEquals(0, dao.getNotesOnce().size)
+    }
 }

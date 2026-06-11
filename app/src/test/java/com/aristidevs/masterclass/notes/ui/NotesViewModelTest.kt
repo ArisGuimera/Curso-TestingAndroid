@@ -68,4 +68,16 @@ class NotesViewModelTest {
             cancelAndConsumeRemainingEvents()
         }
     }
+
+    @Test
+    fun deleting_note_calls_repository() = runTest {
+        every { repository.getNotes() } returns flowOf(emptyList())
+        coEvery { repository.deleteNote(any()) } just Runs
+        val viewModel = NotesViewModel(repository)
+        val note = Note(id = 7, title = "Para borrar", content = "", important = false)
+
+        viewModel.onDeleteNote(note)
+
+        coVerify { repository.deleteNote(note) }
+    }
 }

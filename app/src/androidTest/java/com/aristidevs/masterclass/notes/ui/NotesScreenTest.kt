@@ -2,6 +2,7 @@ package com.aristidevs.masterclass.notes.ui
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -42,5 +43,16 @@ class NotesScreenTest {
 
         composeRule.onNodeWithText("Importante UI").assertIsDisplayed()
         composeRule.onNodeWithText("Normal UI").assertDoesNotExist()
+    }
+
+    @Test
+    fun delete_note_removes_it_from_list() {
+        composeRule.onNodeWithTag(TITLE_INPUT_TAG).performTextInput("Para borrar")
+        composeRule.onNodeWithTag(SAVE_BUTTON_TAG).performClick()
+        composeRule.onNodeWithText("Para borrar").assertIsDisplayed()
+
+        composeRule.onNodeWithContentDescription("Borrar Para borrar").performClick()
+
+        composeRule.onNodeWithText("Para borrar").assertDoesNotExist()
     }
 }
