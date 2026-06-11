@@ -18,6 +18,10 @@ class RoomNotesRepository(
         noteDao.insert(note)
     }
 
+    override suspend fun deleteNote(note: Note) {
+        noteDao.delete(note)
+    }
+
     override suspend fun clear() {
         noteDao.clear()
     }
