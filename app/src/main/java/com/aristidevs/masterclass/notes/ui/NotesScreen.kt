@@ -31,12 +31,36 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.aristidevs.masterclass.notes.data.Note
 
+const val TITLE_INPUT = "titleInput"
+const val SAVE_BUTTON_TAG = "saveButton"
+const val IMPORTANT_ONLY_TOGGLE_TAG = "importantOnlyToggle"
 @Composable
 fun NotesScreen(
     viewModel: NotesViewModel
 ) {
     val state by viewModel.uiState.collectAsState()
 
+    NotesContent(
+        state = state,
+        onTitleChanged = viewModel::onTitleChanged,
+        onContentChanged = viewModel::onContentChanged,
+        onImportantChanged = viewModel::onImportantChanged,
+        onImportantOnlyToggled = viewModel::onImportantOnlyToggled,
+        onSaveClick = viewModel::saveNote,
+        onDeleteClicked =viewModel::onDeleteNote
+    )
+}
+
+@Composable
+fun NotesContent(
+    state: NotesUiState,
+    onTitleChanged:(String)-> Unit,
+    onContentChanged:(String)-> Unit,
+    onImportantChanged:(Boolean)-> Unit,
+    onImportantOnlyToggled: () -> Unit,
+    onSaveClick: () -> Unit,
+    onDeleteClicked: (Note) -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -51,9 +75,10 @@ fun NotesScreen(
 
         OutlinedTextField(
             value = state.title,
-            onValueChange = viewModel::onTitleChanged,
+            onValueChange = onTitleChanged,
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .testTag(TITLE_INPUT),
             label = { Text("Título (mín. 3 caracteres)") },
             singleLine = true,
             isError = state.title.isNotBlank() && !state.canSave && !state.isLoading
@@ -61,7 +86,7 @@ fun NotesScreen(
 
         OutlinedTextField(
             value = state.content,
-            onValueChange = viewModel::onContentChanged,
+            onValueChange = onContentChanged,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(120.dp),
@@ -74,16 +99,17 @@ fun NotesScreen(
         ) {
             Checkbox(
                 checked = state.important,
-                onCheckedChange = viewModel::onImportantChanged,
+                onCheckedChange = onImportantChanged,
             )
             Text(text = "Importante")
         }
 
         Button(
-            onClick = viewModel::saveNote,
+            onClick = onSaveClick,
             enabled = state.canSave && !state.isLoading,
             modifier = Modifier
                 .fillMaxWidth()
+                .testTag(SAVE_BUTTON_TAG)
         ) {
             Text(if (state.isLoading) "Guardando..." else "Guardar")
         }
@@ -97,7 +123,7 @@ fun NotesScreen(
             Text(text = "Solo importantes")
             Checkbox(
                 checked = state.importantOnly,
-                onCheckedChange = { viewModel.onImportantOnlyToggled() },
+                onCheckedChange = { onImportantOnlyToggled() },
             )
         }
 
@@ -119,7 +145,7 @@ fun NotesScreen(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(state.notes) { note ->
-                NoteRow(note = note, onDelete = { viewModel.onDeleteNote(note) })
+                NoteRow(note = note, onDelete = { onDeleteClicked(note) })
             }
         }
     }
